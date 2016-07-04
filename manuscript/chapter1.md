@@ -1,4 +1,61 @@
-# 
+前端开发流程中涉及到的步骤有
+
+1. 开发环境初始化（搭建项目脚手架）
+2. 依赖管理
+3. CSS、JS 预处理
+4. 代码压缩，合并与混淆
+5. Lint
+6. 测试
+
+通常，我们需要会借助一些工具（大部分都是 npm 包，这里用 base tool 指代）来完成这些任务：
+
+1. 搭建项目脚手架--yeoman 等
+2. 依赖管理--bower,npm 等
+3. CSS、JS 预处理--Less,Sass,Babel 等
+4. 代码压缩，合并与混淆--
+5. Lint--ESlint
+6. 测试
+
+
+grunt、gulp 等 task runner 的出现，使我们可以把上面的步骤自动化，极大的节省了开发时间。实际上，我们使用 npm scripts 也完全可以做到前端自动化。
+
+## 为何不使用 grunt、gulp 等 task runner
+
+grunt、gulp 的原理类似：增加一个抽象层，通过将 base tool 封装成插件，调用这些插件。
+
+有时候抽象很有用，但是同时也有代价：
+
+- Grunt、gulp 等 task runner 都有自己的一套配置语法，有一定的学习成本
+- 在很大程度上会依赖插件的作者，例如：插件有没有跟上 base tool 的更新，文档是否清晰
+- 增加复杂度，引入新的 bug
+- 难以调试：出了问题不知道是配置问题还是插件问题，还是base tool 的问题还是版本问题
+- gulpfile 越来越大、依赖的插件越来越多
+- when I use npm scripts, I consume tools directly without an extra layer of abstraction.
+- 一些插件只暴露了底层包一部分API
+
+
+if you are happy with your current build system and it accomplishes all that you need it to do, you can keep using it!
+Keep focusing on writing your code instead of learning more tooling
+
+那么为啥不去掉这层抽象，直接使用 base tool 呢？
+
+## 常见的误解
+
+- 使用 npm scripts 需要很强的命令行编程技能
+- npm scripts 不够强大
+- Gulp 使用 stream，构建起来会更快
+- npm scripts 不能跨平台
+
+这里先不澄清这些误解，看完之后，你应该就有自己的判断了。
+
+## npm scripts
+base tool 通常都会提供命令行接口，利用 npm scripts 直接调用这些 base tool
+足够强大和简单
+很多开源项目早已经开始使用 npm scripts
+
+npm's scripts directive can do everything that these build tools can, more succinctly, more elegantly, with less package dependencies and less maintainence overhead.
+
+## 基础准备
 
 npm 不仅仅是一个包管理工具，它提供了很丰富的功能。利用它的 `npm run-script` 命令，来构建自动化流程。
 
@@ -46,34 +103,8 @@ npm 还提供了几个常用命令的缩写：
 从 npm 2.0.0 开始，可以传递参数。
 
 
-task runner
-## grunt gulp 有什么问题
 
-- 它们的抽象没必要。Abstractions are useful, but abstractions have a cost.They make us dependent upon the plugin maintainers and their documentation. And they add complexity by increasing the number of dependencies.
-- gulpfile 越来越大、依赖的插件越来越多
-- 插件容易过时，依赖于插件的作者更新、fix bug
-- 插件难以调试：除了问题不知道是配置问题还是插件问题，还是base tool 的问题还是版本问题
-- when I use npm scripts, I consume tools directly without an extra layer of abstraction.
-- 一些插件文档不清楚
-- 一些插件只暴露了底层包一部分API
-- 这些都是可以解决的问题，但是如果我们直接使用底层包，就没有这些问题
-- Grunt, Gulp, Broccoli, Brunch and the like all require you to fit your tasks into their paradigms and configurations. Each has it’s own syntaxes, quirks and gotchas that you need to learn.
 
-if you are happy with your current build system and it accomplishes all that you need it to do, you can keep using it!
-Keep focusing on writing your code instead of learning more tooling
-
-## 常见的误解
-People think npm scripts require strong command line skills
-People think npm scripts aren’t powerful enough
-People think Gulp’s streams are necessary for fast builds
-People think npm scripts don’t run cross platform
-
-## npm scripts
-using node packages directly, with the command line interfaces they provide。
-足够强大和简单
-很多开源项目已经开始使用 npm scripts
-
-npm's scripts directive can do everything that these build tools can, more succinctly, more elegantly, with less package dependencies and less maintainence overhead.
 
 npm scripts
 npm run 命令
@@ -88,7 +119,6 @@ pre- post- 钩子
 传递参数
 npm config 变量
 
-windows 问题
 
 替换任务
 
@@ -130,18 +160,29 @@ node_modules/.bin 是如何出现的
 npm-scripts
 https://docs.npmjs.com/misc/scripts
 
+## 实践
+
 接手到一个旧项目，
 
 ## 添加浏览器刷新
 当js、css 、模板文件文件更新时，刷新浏览器
+
+```
 npm install -g browser-sync
+
 "watch": "browser-sync start --proxy '127.0.0.1:8000' --files 'kcon/static/styles/*.css'"
-
+```
 ## CSS 预处理器
-node-sass
-npm install node-sass
-node-sass --watch kcon/static/src/main.scss kcon/static/styles/test.css
 
+node-sass
+
+```
+npm install node-sass
+```
+
+```
+node-sass --watch kcon/static/src/main.scss kcon/static/styles/test.css
+```
 ## autoprefix
 npm install --save-dev postcss-cli autoprefixer
 "autoprefixer": "postcss -u autoprefixer --autoprefixer.browsers '&gt; 5%, ie 9' -r dist/css/*"
